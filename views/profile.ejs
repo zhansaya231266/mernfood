@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a1a, #2b2b2b);
+            color: white;
+        }
+
+        .container {
+            background: #222;
+            max-width: 500px;
+            padding: 20px;
+            margin-top: 50px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
+        }
+
+        input {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff4d4d, #ff0000);
+            border: none;
+            color: white;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #f43030, #ff6347);
+            box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar a {
+            color: white !important;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .btn-nav {
+            margin-left: 10px;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+
+        .btn-nav:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+    <%- include('navbar') %>
+
+
+<div class="container">
+    <h1>👤 Профиль <%= user ? user.name : "Гость" %></h1>
+    <% if (user) { %>
+        <form action="/update" method="POST">
+            <label>Имя:</label>
+            <input type="text" name="name" value="<%= user.name %>" required>
+            <label>Почта:</label>
+            <input type="email" name="email" value="<%= user.email %>" required>
+            <button class="btn btn-success w-100">Обновить</button>
+        </form>
+
+        <form action="/api/v1/auth/logout" method="POST">
+            <button class="btn btn-secondary w-100 mt-2">Выйти</button>
+        </form>
+        
+
+        <form action="/delete" method="POST" onsubmit="return confirm('Вы уверены?')">
+            <button class="btn btn-danger w-100 mt-2">Удалить аккаунт</button>
+        </form>
+    <% } else { %>
+        <p>Вы не авторизованы. <a href="/login">Войти</a></p>
+    <% } %>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
