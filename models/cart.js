@@ -7,7 +7,7 @@ const CartSchema = new mongoose.Schema({
             foodId: { type: mongoose.Schema.Types.ObjectId, ref: "Food", required: true },
             name: String,
             variant: String,
-            quantity: { type: Number, default: 1 },
+            quantity: { type: Number, default: 1, min: 1 },
             price: Number,
             image: String,
         }

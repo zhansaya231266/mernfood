@@ -18,4 +18,6 @@ const OrderSchema = new mongoose.Schema({
     isPaid: { type: Boolean, default: false },
 });
 
+OrderSchema.index({ userId: 1, createdAt: -1 });
+
 export default mongoose.model("Order", OrderSchema);
