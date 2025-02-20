@@ -5,6 +5,7 @@ import path from "path";
 import bcrypt from "bcrypt";
 import session from "express-session";
 import { User } from "./models/user.js";
+import Order from "./models/order.js"
 import { dbConnection } from "./database/dbConnection.js";
 import { generateOtp } from "./middlewares/generateOtp.js";
 import sendEmail from "./middlewares/email.js";
@@ -14,7 +15,7 @@ import Food from "./models/food.js"
 import cartRoutes from "./routes/cartRoutes.js"
 import adminRoutes from "./routes/adminRoutes.js";
 import methodOverride from "method-override";
-
+import logger from "./middlewares/logger.js";
 
 dotenv.config({ path: "./config/config.env" });
 
@@ -28,6 +29,13 @@ app.use(session({
     cookie: { secure: false, httpOnly: true, maxAge: 1000 * 60 * 60 }
 }));
 
+logger.info("Система логирования запущена");
+
+app.use((req, res, next) => {
+    logger.info(`${req.method} ${req.url} - ${req.session?.user?.email || "Гость"}`);
+    next();
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -39,6 +47,12 @@ app.use("/images", express.static(path.join(__dirname, "views/images")));
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist'));
 
 dbConnection();
+
+const orderStream = Order.watch();
+orderStream.on("change", (change) => {
+  console.log("Изменение в заказах:", change);
+});
+
 
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/foods", foodRoutes);
@@ -200,6 +214,7 @@ app.post("/signin", async (req, res) => {
     try {
         const user = await User.findOne({ email: req.body.email });
         if (!user) {
+            logger.warn(`Неудачный вход: ${req.body.email}`);
             return res.status(400).send("Неправильный email.");
         }
 
