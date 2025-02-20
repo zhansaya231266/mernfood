@@ -1,6 +1,7 @@
 import express from "express";
 import { registerUser, loginUser, updateUser, deleteUser, verifyOtp, resendOtp } from "../controller/auth.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
+import { checkQueryPerformance } from "../controller/order.js";
 
 const router = express.Router();
 
@@ -24,6 +25,6 @@ router.post('/logout', (req, res) => {
   res.redirect('/login');
 });
 
-
+router.get("/stats/query", checkQueryPerformance);
 
 export default router;

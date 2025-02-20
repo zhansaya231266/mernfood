@@ -2,6 +2,8 @@ import express from "express";
 import { isAdmin } from "../middlewares/isAdmin.js";
 import Food from "../models/food.js";
 import Order from "../models/order.js";
+import { userOrderStats, dailySales } from "../controller/order.js";
+
 
 const router = express.Router();
 
@@ -45,8 +47,6 @@ router.post("/foods", isAdmin, async (req, res) => {
         res.status(500).json({ success: false, message: "Ошибка сервера" });
     }
 });
-
-
 
 router.get("/foods/:id/edit", isAdmin, async (req, res) => {
     try {
@@ -125,5 +125,7 @@ router.delete('/orders/:orderId', isAdmin, async (req, res) => {
     }
 });
 
+router.get("/stats/user-orders", isAdmin, userOrderStats);  // Заказы по пользователям
+router.get("/stats/sales", isAdmin, dailySales);  // Продажи по дням
 
 export default router;
